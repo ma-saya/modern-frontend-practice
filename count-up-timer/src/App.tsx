@@ -217,10 +217,17 @@ const Pomodoro = ({theme}: { theme: "light" | "dark"}) => {
 };
 export default function App() {
   const [activeTab, setActiveTab] = useState<"up" | "down" | "pomodoro">("up");
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    const saved = localStorage.getItem("app-theme");
+    return (saved as "light" | "dark") || "light";
+  });
   const toggleTheme = () => {
     setTheme(prev => prev === "light" ? "dark" : "light")
   }
+
+  useEffect(() => {
+    localStorage.setItem("app-theme", theme);
+  }, [theme])
   return (
     <div style={{ textAlign: "center", paddingTop: "5vh", fontFamily: "sans-serif", backgroundColor: colors[theme].bg, transition: "background-color 0.3s, color 0.3s", minHeight: "100vh", width: "100%",boxSizing: "border-box" }}>
       <div style={{ position: "absolute", top: "20px", right: "20px"}}>
