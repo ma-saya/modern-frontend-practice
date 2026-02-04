@@ -7,13 +7,21 @@ const CountUp = () => {
     let intervalId: any;
     if (isRunning) {
       intervalId = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
-      }, 1000);
+        setTime((prev) => prev + 1);
+      }, 10);
     }
     return () => {
       clearInterval(intervalId);
     };
   }, [isRunning]);
+
+  const formatTime = () => {
+    const min = Math.floor(time / 6000);
+    const sec = Math.floor((time % 6000) / 100)
+    const ms = time % 100;
+
+    return `${min}:${sec.toString().padStart(2, "0")}.${ms.toString().padStart(2, "0")}`;
+  }
 
   const handleReset = () => {
     setIsRunning(false);
@@ -23,8 +31,8 @@ const CountUp = () => {
   return (
     <div style={{ textAlign: "center", marginTop: "20vh" }}>
       <h1>カウントアップタイマー</h1>
-      <div style={{ fontSize: "48px", margin: "20px 0" }}>
-        {time}
+      <div style={timeStyle}>
+        {formatTime()}
         <span style={{ fontSize: "30px" }}>秒</span>
       </div>
       <div>
