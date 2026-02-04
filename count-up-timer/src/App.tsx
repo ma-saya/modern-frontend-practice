@@ -1,5 +1,18 @@
 import { useState, useEffect } from "react";
 
+const Modal = ({ isOpen, onClose, message}: { isOpen: boolean; onClose: () => void; message: string }) => {
+  if (!isOpen) return null;
+  return (
+    <div style={overlayStyle}>
+      <div style={modalContentStyle}>
+        <h2 style={{ color: "ff4d4d", marginBottom: "20px"}}>お知らせ</h2>
+        <p style={{ fontSize: "18px", marginBottom: "30px"}}>{message}</p>
+        <button onClick={onClose} style={closeButtonStyle}>閉じる</button>
+      </div>
+    </div>
+  )
+}
+
 const CountUp = () => {
   const [time, setTime] = useState<number>(0);
   const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -73,6 +86,7 @@ const CountDown = () => {
   const [time, setTime] = useState<number>(0);
   const [inputTime, setInputTime] = useState<string>("");
   const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     let intervalId: any;
@@ -81,6 +95,7 @@ const CountDown = () => {
         setTime((prev) => {
           if (prev <= 1) {
             setIsRunning(false);
+            setShowModal(true);
             return 0;
           }
           return prev - 1;
@@ -99,6 +114,11 @@ const CountDown = () => {
   return (
     <div style={{ textAlign: "center", marginTop: "20vh" }}>
       <h2>カウントダウンタイマー</h2>
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        message="時間になりました！"
+      />
       <div style={{ fontSize: "48px", margin: "20px 0" }}>
         {time}秒
       </div>
@@ -126,13 +146,14 @@ const Pomodoro = () => {
   const [time, setTime] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [mode, setMode] = useState<"work" | "break">("work");
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     let intervalId: any;
     if (isRunning) {
       intervalId = setInterval(() => {
         setTime((t) => {
-          if (t <= 1) { setIsRunning(false); return 0;}
+          if (t <= 1) { setIsRunning(false); setShowModal(true); return 0;}
           return t - 1;
         });
       }, 1000);
@@ -155,6 +176,11 @@ const Pomodoro = () => {
   return (
     <div style={{ ...boxStyle, backgroundColor: mode === "work" ? "#f28b82" : "#aecbfa" }}>
       <h2>ポモドーロタイマー</h2>
+      <Modal 
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        message={mode === "work" ? "作業終了！休憩しましょう。" : "休憩終了！作業に戻りましょう。"}
+      />
       <div style={{ marginBottom: "15px" }}>
         <button onClick={() => switchMode("work")} style={{ fontWeight: mode === "work" ? "bold" : "normal" }}>集中25分</button>
         <button onClick={() => switchMode("break")} style={{ marginLeft: "10px", fontWeight: mode === "break" ? "bold" : "normal"}}>休憩5分</button>
@@ -200,3 +226,7 @@ const boxStyle = { padding: "30px", border: "1px solid #ddd", borderRadius: "10p
 const timeStyle = { fontSize: "60px", fontWeight: "bold", margin: "20px 0" };
 const tabStyle = { padding: " 10px 20px", border: "none", backgroundColor: "#e0e0e0", marginLeft: "10px" };
 const activeTabStyle = { ...tabStyle, backgroundColor: "#007bff", color: "white"};
+
+const overlayStyle: React.CSSProperties = { position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000};
+const modalContentStyle: React.CSSProperties = {backgroundColor: "white", padding: "40px", borderRadius: "10px",textAlign: "center", boxShadow: "0 5px 15px rgba(0,0,0,0.3)",minWidth: "300px"};
+const closeButtonStyle = {padding: "10px 30px", fontSize: "16px", backgroundColor: "#007bff", color: "white",border: "none", borderRadius: "5px", cursor: "pointer"};
