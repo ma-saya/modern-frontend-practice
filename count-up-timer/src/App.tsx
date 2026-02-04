@@ -1,5 +1,22 @@
 import { useState, useEffect } from "react";
 
+const colors = {
+  light: { bg: "#ffffff", text: "#333333", box: "#f9f9f9", border: "#ddd" },
+  dark: { bg: "#222222", text: "#ffffff", box: "#444444", border: "#666" },
+};
+
+const getBoxStyle = (theme: "light" | "dark") => ({
+  padding: "30px",
+  border: `1px solid ${colors[theme].border}`,
+  borderRadius: "10px",
+  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+  maxWidth: "500px",
+  margin: "0 auto",
+  backgroundColor: colors[theme].box,
+  color: colors[theme].text,
+  transition: "all 0.3s",
+});
+
 const Modal = ({ isOpen, onClose, message}: { isOpen: boolean; onClose: () => void; message: string }) => {
   if (!isOpen) return null;
   return (
@@ -13,7 +30,7 @@ const Modal = ({ isOpen, onClose, message}: { isOpen: boolean; onClose: () => vo
   )
 }
 
-const CountUp = () => {
+const CountUp = ({theme}: { theme: "light" | "dark" }) => {
   const [time, setTime] = useState<number>(0);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   useEffect(() => {
@@ -42,7 +59,7 @@ const CountUp = () => {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "20vh" }}>
+    <div style={getBoxStyle(theme)}>
       <h1>カウントアップタイマー</h1>
       <div style={timeStyle}>
         {formatTime()}
@@ -82,7 +99,7 @@ const CountUp = () => {
   );
 };
 
-const CountDown = () => {
+const CountDown = ({theme}: { theme: "light" | "dark" }) => {
   const [time, setTime] = useState<number>(0);
   const [inputTime, setInputTime] = useState<string>("");
   const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -112,7 +129,7 @@ const CountDown = () => {
 
   
   return (
-    <div style={{ textAlign: "center", marginTop: "20vh" }}>
+    <div style={getBoxStyle(theme)}>
       <h2>カウントダウンタイマー</h2>
       <Modal
         isOpen={showModal}
@@ -142,7 +159,7 @@ const CountDown = () => {
     </div>
   );
 };
-const Pomodoro = () => {
+const Pomodoro = ({theme}: { theme: "light" | "dark"}) => {
   const [time, setTime] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [mode, setMode] = useState<"work" | "break">("work");
@@ -173,8 +190,14 @@ const Pomodoro = () => {
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
+  const pomodoroStyle = {
+    ...getBoxStyle(theme),
+    backgroundColor: mode === "work" ? "#f28b82" : "#aecbfa",
+    color: "#333",
+  }
+
   return (
-    <div style={{ ...boxStyle, backgroundColor: mode === "work" ? "#f28b82" : "#aecbfa" }}>
+    <div style={pomodoroStyle}>
       <h2>ポモドーロタイマー</h2>
       <Modal 
         isOpen={showModal}
@@ -194,10 +217,18 @@ const Pomodoro = () => {
 };
 export default function App() {
   const [activeTab, setActiveTab] = useState<"up" | "down" | "pomodoro">("up");
-
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const toggleTheme = () => {
+    setTheme(prev => prev === "light" ? "dark" : "light")
+  }
   return (
-    <div style={{ textAlign: "center", marginTop: "5vh" }}>
-      <h1>タイマーアプリ</h1>
+    <div style={{ textAlign: "center", paddingTop: "5vh", fontFamily: "sans-serif", backgroundColor: colors[theme].bg, transition: "background-color 0.3s, color 0.3s", minHeight: "100vh", width: "100%",boxSizing: "border-box" }}>
+      <div style={{ position: "absolute", top: "20px", right: "20px"}}>
+        <button onClick={toggleTheme} style={{fontSize: "24px", background: "none", border: "none", cursor: "pointer"}}>
+          {theme === "light" ? "🌙" : "☀️"}
+        </button>
+      </div>
+      <h1 style={{ color: colors[theme].text}}>タイマーアプリ</h1>
       <div style={{ marginBottom: "20px" }}>
         <button
         onClick={() => setActiveTab("up")}
@@ -215,14 +246,13 @@ export default function App() {
           ポモドーロ
           </button>
       </div>
-      {activeTab === "up" && <CountUp />}
-      {activeTab === "down" && <CountDown />}
-      {activeTab === "pomodoro" && <Pomodoro />}
+      {activeTab === "up" && <CountUp theme={theme}/>}
+      {activeTab === "down" && <CountDown theme={theme}/>}
+      {activeTab === "pomodoro" && <Pomodoro theme={theme}/>}
     </div>
   )
 }
 
-const boxStyle = { padding: "30px", border: "1px solid #ddd", borderRadius: "10px", boxShadow: "0 2px 5px rgba(0,0,0,0.1)"};
 const timeStyle = { fontSize: "60px", fontWeight: "bold", margin: "20px 0" };
 const tabStyle = { padding: " 10px 20px", border: "none", backgroundColor: "#e0e0e0", marginLeft: "10px" };
 const activeTabStyle = { ...tabStyle, backgroundColor: "#007bff", color: "white"};
