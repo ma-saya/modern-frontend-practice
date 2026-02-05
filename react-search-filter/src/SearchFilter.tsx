@@ -14,7 +14,7 @@ export const SearchFilter = () => {
   });
 
   return (
-    <div style={{ padding: "20px", maxWidth: "400px", margin: "0 auto" }}>
+    <div style={containerStyle}>
       <h2 style={{ textAlign: "center" }}>都道府県検索フィルター</h2>
       <input
         type="text"
@@ -37,7 +37,7 @@ export const SearchFilter = () => {
   );
 };
 
-const cotainerStyle = {
+const containerStyle = {
   maxWidth: "400px",
   margin: "50px auto",
   padding: "20px",
