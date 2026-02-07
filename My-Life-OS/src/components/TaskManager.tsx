@@ -28,7 +28,7 @@ export const TaskManager = () => {
             isDone: false,
             createdAt: Date.now(),
         };
-        setTasks([newTask, ...task]);
+        setTasks([newTask, ...tasks]);
         setInputValue("");
     };
 
