@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { TaskManager } from "./components/TaskManager";
 import { FocusTimer } from "./components/FocusTimer";
+import { BudgetTracker } from "./components/BudgetTracker";
 
 
 export default function App() {
@@ -8,6 +9,7 @@ export default function App() {
     <div>
       <TaskManager />
       <FocusTimer />
+      <BudgetTracker />
     </div>
   )
 }
